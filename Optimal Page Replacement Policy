@@ -1,0 +1,86 @@
+//This page replacement technique selects the page for replacement for which the time to next reference in future is the longest.
+//It selects the page to be replaced which has the largest forward distance.
+
+
+import java.util.*;
+public class Optimal {
+	public static void main(String args[]) {
+		Scanner s = new Scanner(System.in);
+		int i,j,k,n,full,key,element,count,flag,max,new_key,present,pagehit=0,pagefault=0;
+		System.out.print("Enter total number of pages: ");
+		n = s.nextInt();
+		int pages[] = new int[n];
+		System.out.print("Enter "+n+" page references: ");
+		for(i = 0 ; i < n ; i++) {
+			pages[i] = s.nextInt();
+		}
+		System.out.print("Enter frame size: ");
+		int framesize = s.nextInt();
+		int frames[] = new int[framesize];
+		int distance[] = new int[framesize];
+		for(i = 0 ; i < framesize ; i++) {
+			frames[i] = 0;
+		}
+		System.out.println("Frames are: ");
+		for(i = 0 ; i < n ; i++) {
+			System.out.print((i+1)+": ");
+			full = 0;
+			key = 0;
+			present = 0;
+			for(j = 0 ;j < framesize ; j++) {
+				if(frames[j] == pages[i]) {
+					pagehit++;
+					present = 1;
+				}
+			}
+			if(present != 1) {
+				pagefault++;
+				for(j = 0 ; j < framesize ; j++) {
+					if(frames[j] == 0) {
+						key = j;
+						break;
+					}
+					else {
+						full++;
+					}
+				}
+				if(full < framesize) {
+					frames[key] = pages[i];
+				}
+				else {
+					for(j = 0 ; j < framesize ; j++) {
+						element = frames[j];
+						count = 1;
+						flag = 0;
+						for(k = i + 1 ; k < n; k++) {
+							if(element == pages[k]) {
+								flag = 1;
+								break;
+							}
+							else
+								count++;
+						}
+						if(flag != 1)
+							count++;
+						distance[j] = count;
+					}
+					max = distance[0];
+					new_key = 0;
+					for(j = 1 ; j < framesize ; j++) {
+						if(max < distance[j]) {
+							max = distance[j];
+							new_key = j;
+						}
+					}
+					frames[new_key] = pages[i];
+				}
+			}
+			for(j = 0 ;j < framesize ; j++) {
+				System.out.print(frames[j]+" ");
+			}
+			System.out.print("\n");
+		}
+		System.out.println("\nNumber of Page Hit : "+pagehit);
+		System.out.println("\nNumber of Page faults : "+pagefault);
+	}
+}
